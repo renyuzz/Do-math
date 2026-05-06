@@ -1,81 +1,113 @@
-import React, { useState, useMemo } from 'react';
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>保齡球 B標換算器</title>
+  <!-- 引入 Tailwind CSS 進行排版與樣式設計 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 p-4 font-sans flex justify-center items-start">
+  
+  <div class="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden mt-6">
+    
+    <!-- Header -->
+    <div class="bg-blue-600 dark:bg-blue-700 p-6 text-center">
+      <h1 class="text-2xl font-bold text-white flex items-center justify-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <circle cx="10" cy="9" r="1" fill="currentColor"></circle>
+          <circle cx="14" cy="9" r="1" fill="currentColor"></circle>
+          <circle cx="12" cy="13" r="1" fill="currentColor"></circle>
+        </svg>
+        保齡球 B標換算器
+      </h1>
+      <p class="text-blue-100 text-sm mt-2 opacity-90">快速計算 B標結果</p>
+    </div>
 
-export default function App() {
-  // 預設參數：A標(基準分)預設200，B標(倍率)預設0.80
-  const [baseScore, setBaseScore] = useState(200);
-  const [multiplier, setMultiplier] = useState(0.80);
-
-  // 產生 0.60 到 0.81 的倍率陣列 (間距 0.01)
-  const multipliers = useMemo(() => {
-    return Array.from({ length: 22 }, (_, i) => (0.60 + i * 0.01).toFixed(2));
-  }, []);
-
-  // 計算B標結果 (保留小數點第一位)
-  const handicapResult = (baseScore * multiplier).toFixed(1);
-
-  return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 p-4 font-sans flex justify-center items-start">
-      <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden mt-6">
+    <div class="p-6 space-y-6">
+      <!-- 輸入區塊 -->
+      <div class="space-y-4">
         
-        {/* Header */}
-        <div className="bg-blue-600 dark:bg-blue-700 p-6 text-center">
-          <h1 className="text-2xl font-bold text-white flex items-center justify-center gap-2">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10"></circle>
-              <circle cx="10" cy="9" r="1" fill="currentColor"></circle>
-              <circle cx="14" cy="9" r="1" fill="currentColor"></circle>
-              <circle cx="12" cy="13" r="1" fill="currentColor"></circle>
-            </svg>
-            保齡球 B標換算器
-          </h1>
-          <p className="text-blue-100 text-sm mt-2 opacity-90">快速計算 B標結果</p>
+        <!-- A標分數 -->
+        <div>
+          <label class="block text-sm font-medium mb-1">A標分數</label>
+          <input 
+            type="number" 
+            id="baseScore"
+            value="200"
+            class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all dark:text-white"
+            placeholder="請輸入A標分數"
+          />
         </div>
 
-        <div className="p-6 space-y-6">
-          {/* 輸入區塊 */}
-          <div className="space-y-4">
-            {/* A標分數 */}
-            <div>
-              <label className="block text-sm font-medium mb-1">A標分數</label>
-              <input 
-                type="number" 
-                value={baseScore} 
-                onChange={(e) => setBaseScore(Number(e.target.value))}
-                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all dark:text-white"
-                placeholder="請輸入A標分數"
-              />
-            </div>
-
-            {/* 倍率選擇 */}
-            <div>
-              <label className="block text-sm font-medium mb-1">倍率</label>
-              <select 
-                value={multiplier} 
-                onChange={(e) => setMultiplier(Number(e.target.value))}
-                className="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all dark:text-white appearance-none"
-              >
-                {multipliers.map(m => (
-                  <option key={m} value={m}>{m}</option>
-                ))}
-              </select>
-            </div>
-          </div>
-
-          {/* B標結果 */}
-          <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-            <h2 className="text-sm font-medium mb-3 text-slate-500 dark:text-slate-400 text-center">
-               計算結果
-            </h2>
-            <div className="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-8 border border-blue-100 dark:border-blue-800/50 shadow-inner">
-              <div className="text-sm text-blue-600 dark:text-blue-400 font-medium mb-2">B標結果</div>
-              <div className="text-6xl font-bold text-blue-700 dark:text-blue-300">
-                {handicapResult}
-              </div>
-            </div>
-          </div>
-
+        <!-- 倍率選擇 -->
+        <div>
+          <label class="block text-sm font-medium mb-1">倍率</label>
+          <select 
+            id="multiplier"
+            class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all dark:text-white appearance-none"
+          >
+            <!-- 這裡的選項會由下方的 JavaScript 動態產生 -->
+          </select>
         </div>
       </div>
+
+      <!-- B標結果 -->
+      <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
+        <h2 class="text-sm font-medium mb-3 text-slate-500 dark:text-slate-400 text-center">
+           計算結果
+        </h2>
+        <div class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-8 border border-blue-100 dark:border-blue-800/50 shadow-inner">
+          <div class="text-sm text-blue-600 dark:text-blue-400 font-medium mb-2">B標結果</div>
+          <div id="handicapResult" class="text-6xl font-bold text-blue-700 dark:text-blue-300">
+            <!-- 結果會顯示在這裡 -->
+          </div>
+        </div>
+      </div>
+
     </div>
-  );
-}
+  </div>
+
+  <script>
+    // 取得畫面上的 HTML 元素
+    const baseScoreInput = document.getElementById('baseScore');
+    const multiplierSelect = document.getElementById('multiplier');
+    const handicapResultDisplay = document.getElementById('handicapResult');
+
+    // 1. 動態產生 0.60 到 0.81 的倍率陣列 (間距 0.01)
+    for (let i = 0; i <= 21; i++) {
+      const val = (0.60 + i * 0.01).toFixed(2);
+      const option = document.createElement('option');
+      option.value = val;
+      option.textContent = val;
+      
+      // 預設選擇 0.80
+      if (val === "0.80") {
+        option.selected = true;
+      }
+      multiplierSelect.appendChild(option);
+    }
+
+    // 2. 計算B標結果的函數
+    function calculate() {
+      // 取得輸入的值，如果為空則當作 0
+      const baseScore = parseFloat(baseScoreInput.value) || 0;
+      const multiplier = parseFloat(multiplierSelect.value) || 0;
+      
+      // 計算並保留小數點第一位
+      const result = (baseScore * multiplier).toFixed(1);
+      
+      // 更新畫面
+      handicapResultDisplay.textContent = result;
+    }
+
+    // 3. 監聽輸入框的變化，只要有改變就重新計算
+    baseScoreInput.addEventListener('input', calculate);
+    multiplierSelect.addEventListener('change', calculate);
+
+    // 4. 網頁剛載入時先執行一次計算
+    calculate();
+  </script>
+</body>
+</html>
