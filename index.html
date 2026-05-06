@@ -41,14 +41,16 @@
           />
         </div>
 
-        <!-- 倍率選擇 -->
+        <!-- 顯示模式 -->
         <div>
-          <label class="block text-sm font-medium mb-1">倍率</label>
+          <label class="block text-sm font-medium mb-1">顯示模式</label>
           <select 
-            id="multiplier"
-            class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all dark:text-white appearance-none"
+            id="cupMode"
+            class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all dark:text-white"
           >
-            <!-- 這裡的選項會由下方的 JavaScript 動態產生 -->
+            <option value="all">全部倍率</option>
+            <option value="leisure">超越休閒盃</option>
+            <option value="dajiale">超越大家樂</option>
           </select>
         </div>
       </div>
@@ -56,13 +58,11 @@
       <!-- B標結果 -->
       <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
         <h2 class="text-sm font-medium mb-3 text-slate-500 dark:text-slate-400 text-center">
-           計算結果
+           各倍率計算結果
         </h2>
-        <div class="flex flex-col items-center justify-center bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-8 border border-blue-100 dark:border-blue-800/50 shadow-inner">
-          <div class="text-sm text-blue-600 dark:text-blue-400 font-medium mb-2">B標結果</div>
-          <div id="handicapResult" class="text-6xl font-bold text-blue-700 dark:text-blue-300">
-            <!-- 結果會顯示在這裡 -->
-          </div>
+        <!-- 改為 Grid 網格顯示所有倍率結果，並加入卷軸 -->
+        <div id="resultsGrid" class="grid grid-cols-3 gap-3 max-h-[350px] overflow-y-auto p-1" style="scrollbar-width: thin;">
+          <!-- 結果會顯示在這裡 -->
         </div>
       </div>
 
@@ -72,39 +72,51 @@
   <script>
     // 取得畫面上的 HTML 元素
     const baseScoreInput = document.getElementById('baseScore');
-    const multiplierSelect = document.getElementById('multiplier');
-    const handicapResultDisplay = document.getElementById('handicapResult');
+    const resultsGrid = document.getElementById('resultsGrid');
+    const cupModeSelect = document.getElementById('cupMode');
 
-    // 1. 動態產生 0.60 到 0.81 的倍率陣列 (間距 0.01)
-    for (let i = 0; i <= 21; i++) {
-      const val = (0.60 + i * 0.01).toFixed(2);
-      const option = document.createElement('option');
-      option.value = val;
-      option.textContent = val;
-      
-      // 預設選擇 0.80
-      if (val === "0.80") {
-        option.selected = true;
-      }
-      multiplierSelect.appendChild(option);
+    // 1. 定義不同的倍率陣列模式
+    const modes = {
+      all: [],
+      leisure: ["0.60", "0.64", "0.68", "0.72", "0.76", "0.80", "0.84", "0.88"],
+      dajiale: ["0.60", "0.64", "0.68", "0.72", "0.76", "0.80", "0.84", "0.88"]
+    };
+
+    // 產生全部的倍率 (0.60 到 0.92)
+    for (let i = 0; i <= 32; i++) {
+      modes.all.push((0.60 + i * 0.01).toFixed(2));
     }
 
-    // 2. 計算B標結果的函數
+    // 2. 計算並顯示所有B標結果的函數
     function calculate() {
       // 取得輸入的值，如果為空則當作 0
       const baseScore = parseFloat(baseScoreInput.value) || 0;
-      const multiplier = parseFloat(multiplierSelect.value) || 0;
       
-      // 計算並保留小數點第一位
-      const result = (baseScore * multiplier).toFixed(1);
+      // 取得目前選取的模式陣列
+      const activeMultipliers = modes[cupModeSelect.value];
       
-      // 更新畫面
-      handicapResultDisplay.textContent = result;
+      // 清空現有的結果
+      resultsGrid.innerHTML = '';
+      
+      // 迴圈產生每個倍率的卡片
+      activeMultipliers.forEach(multiplier => {
+        const result = (baseScore * parseFloat(multiplier)).toFixed(1);
+        
+        // 建立卡片 HTML 結構
+        const card = document.createElement('div');
+        card.className = "bg-blue-50 dark:bg-blue-900/20 rounded-xl p-3 border border-blue-100 dark:border-blue-800/50 flex flex-col items-center shadow-sm";
+        card.innerHTML = `
+          <span class="text-xs text-slate-500 dark:text-slate-400 mb-1">倍率 ${multiplier}</span>
+          <span class="text-xl font-bold text-blue-700 dark:text-blue-300">${result}</span>
+        `;
+        
+        resultsGrid.appendChild(card);
+      });
     }
 
-    // 3. 監聽輸入框的變化，只要有改變就重新計算
+    // 3. 監聽輸入框與下拉選單的變化，只要有改變就重新計算
     baseScoreInput.addEventListener('input', calculate);
-    multiplierSelect.addEventListener('change', calculate);
+    cupModeSelect.addEventListener('change', calculate);
 
     // 4. 網頁剛載入時先執行一次計算
     calculate();
