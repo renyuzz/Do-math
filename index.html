@@ -55,7 +55,12 @@
             <option value="golden_fuying">黃金府瀛</option>
             <option value="golden_xiongfeng">黃金雄風</option>
             <option value="neipu_qulian">內埔曲聯</option>
+            <option value="guanyuan_monthly">冠源月賽</option>
           </select>
+        </div>
+
+        <!-- 賽事專屬提示區塊 -->
+        <div id="tournamentHint" class="hidden text-sm text-rose-600 dark:text-rose-400 font-medium bg-rose-50 dark:bg-rose-900/20 p-3 rounded-xl border border-rose-200 dark:border-rose-800 text-center shadow-sm">
         </div>
       </div>
 
@@ -78,6 +83,7 @@
     const baseScoreInput = document.getElementById('baseScore');
     const resultsGrid = document.getElementById('resultsGrid');
     const cupModeSelect = document.getElementById('cupMode');
+    const tournamentHint = document.getElementById('tournamentHint');
 
     // 1. 定義不同的倍率陣列模式
     const modes = {
@@ -87,7 +93,8 @@
       golden_feedback: ["0.70", "0.72", "0.74", "0.76", "0.78", "0.80", "0.82", "0.84", "0.86", "0.88", "0.90"],
       golden_fuying: ["0.72", "0.73", "0.74", "0.75", "0.76", "0.77", "0.78", "0.79", "0.80", "0.81", "0.82"],
       golden_xiongfeng: ["0.72", "0.73", "0.74", "0.75", "0.76", "0.77", "0.78", "0.79", "0.80", "0.81", "0.82"],
-      neipu_qulian: ["0.55", "0.60", "0.65", "0.70", "0.75", "0.80", "0.85", "0.90", "0.95"]
+      neipu_qulian: ["0.55", "0.60", "0.65", "0.70", "0.75", "0.80", "0.85", "0.90", "0.95"],
+      guanyuan_monthly: ["0.91", "0.88", "0.85", "0.82", "0.79", "0.76", "0.71", "0.68"]
     };
 
     // 產生全部的倍率 (0.60 到 0.92)
@@ -101,7 +108,16 @@
       const baseScore = parseFloat(baseScoreInput.value) || 0;
       
       // 取得目前選取的模式陣列
-      const activeMultipliers = modes[cupModeSelect.value];
+      const activeMode = cupModeSelect.value;
+      const activeMultipliers = modes[activeMode];
+      
+      // 處理專屬提示顯示
+      if (activeMode === 'guanyuan_monthly') {
+        tournamentHint.innerHTML = '💡 <strong>特別提示：</strong> 冠源月賽計算後 <strong>B標需再扣 30 分</strong>';
+        tournamentHint.classList.remove('hidden');
+      } else {
+        tournamentHint.classList.add('hidden');
+      }
       
       // 清空現有的結果
       resultsGrid.innerHTML = '';
@@ -131,8 +147,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-```
