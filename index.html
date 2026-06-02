@@ -2,33 +2,144 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>保齡球 B標換算器</title>
-  <!-- 引入 Tailwind CSS 進行排版與樣式設計 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>打球要賺錢</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* 隱藏內容的輔助 class */
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    /* ==================== 全倒盃 STRIKE CUP 專屬樣式 ==================== */
+    @import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Noto+Sans+TC:wght@400;700;900&display=swap');
+
+    .strike-cup-container {
+        font-family: 'Noto Sans TC', sans-serif;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .font-sport {
+        font-family: 'Black Ops One', cursive;
+    }
+
+    :root {
+        --name-w: 65px;   
+    }
+
+    .table-container {
+        display: grid;
+        grid-template-columns: var(--name-w) 1fr;
+        overflow: hidden;
+        width: 100%;
+        border-top: 1px solid #1e293b;
+        border-bottom: 1px solid #1e293b;
+    }
+
+    .side-col {
+        background-color: #1e293b;
+        z-index: 10;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .side-col-left { border-right: 1px solid #334155; }
+    .side-col-right {
+        border-left: 1px solid #334155;
+        background-color: rgba(30, 41, 59, 0.9);
+    }
+
+    .grid-area {
+        display: flex;
+        flex-direction: column;
+        background-color: #0f172a;
+    }
+
+    .row-h {
+        height: 55px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid #1e293b;
+    }
+
+    .header-h {
+        height: 35px;
+        font-size: 9px;
+        color: #64748b;
+        text-transform: uppercase;
+        font-weight: 900;
+        background-color: #0f172a;
+    }
+
+    .strike-cell {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-right: 1px solid rgba(30, 41, 59, 0.5);
+        cursor: pointer;
+        transition: all 0.1s;
+        min-width: 0;
+    }
+
+    .strike-cell.active {
+        background-color: #ef4444 !important;
+        color: white !important;
+    }
+
+    .card-winner {
+        background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%);
+        box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.4);
+    }
+
+    .name-text {
+        font-size: 11px;
+        font-weight: 900;
+        padding: 0 2px;
+        text-align: center;
+        width: 100%;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+  </style>
 </head>
 <body class="min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 p-4 font-sans flex justify-center items-start">
   
   <div class="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden mt-6">
     
-    <!-- Header -->
-    <div class="bg-blue-600 dark:bg-blue-700 p-6 text-center">
-      <h1 class="text-2xl font-bold text-white flex items-center justify-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- 頂部導覽列 (Tabs) -->
+    <div class="bg-blue-600 dark:bg-blue-700 pt-4 px-4 flex flex-col items-center">
+      <h1 class="text-xl font-bold text-white flex items-center justify-center gap-2 mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
           <circle cx="10" cy="9" r="1" fill="currentColor"></circle>
           <circle cx="14" cy="9" r="1" fill="currentColor"></circle>
           <circle cx="12" cy="13" r="1" fill="currentColor"></circle>
         </svg>
-        保齡球 B標換算器
+        打球要賺錢
       </h1>
-      <p class="text-blue-100 text-sm mt-2 opacity-90">快速計算 B標結果</p>
+      
+      <!-- 頁籤按鈕 -->
+      <div class="flex w-full space-x-1 bg-blue-700/50 dark:bg-blue-800/50 p-1 rounded-t-xl">
+        <button onclick="switchTab('tab-calculator')" id="btn-calculator" class="flex-1 py-2 text-sm font-medium rounded-t-lg transition-colors bg-white text-blue-700 dark:bg-slate-800 dark:text-blue-300">
+          B標換算
+        </button>
+        <button onclick="switchTab('tab-strikecup')" id="btn-strikecup" class="flex-1 py-2 text-sm font-medium rounded-t-lg transition-colors text-blue-100 hover:text-white dark:text-slate-300">
+          全倒盃
+        </button>
+      </div>
     </div>
 
-    <div class="p-6 space-y-6">
+    <!-- ==================== 分頁 1: B標換算器 ==================== -->
+    <div id="tab-calculator" class="tab-content active p-6 space-y-6">
+      
       <!-- 輸入區塊 -->
       <div class="space-y-4">
-        
         <!-- A標分數 -->
         <div>
           <label class="block text-sm font-medium mb-1">A標分數</label>
@@ -69,23 +180,137 @@
         <h2 class="text-sm font-medium mb-3 text-slate-500 dark:text-slate-400 text-center">
            各倍率計算結果
         </h2>
-        <!-- 改為 Grid 網格顯示所有倍率結果，並加入卷軸 -->
         <div id="resultsGrid" class="grid grid-cols-3 gap-3 max-h-[350px] overflow-y-auto p-1" style="scrollbar-width: thin;">
           <!-- 結果會顯示在這裡 -->
         </div>
       </div>
 
     </div>
+
+    <!-- ==================== 分頁 2: 全倒盃 STRIKE CUP ==================== -->
+    <div id="tab-strikecup" class="tab-content bg-[#0f172a] text-[#f8fafc] strike-cup-container pb-10">
+      
+        <!-- Header -->
+        <header class="p-4 pt-6 text-center bg-slate-900 rounded-b-[2rem] shadow-2xl border-b-2 border-red-500">
+            <h1 class="text-4xl font-sport text-red-500 italic tracking-tighter drop-shadow-md">STRIKE CUP</h1>
+            <div class="mt-1 text-slate-400 text-[10px] font-bold tracking-widest uppercase">全倒盃</div>
+            
+            <div class="flex justify-center gap-1.5 mt-4">
+                <div class="bg-slate-800 px-2 py-1.5 rounded-lg border border-slate-700 text-[8px]">
+                    <div class="text-slate-500">1-6人</div>
+                    <div class="text-blue-400 font-black">取 1</div>
+                </div>
+                <div class="bg-slate-800 px-2 py-1.5 rounded-lg border border-slate-700 text-[8px]">
+                    <div class="text-slate-500">7-11人</div>
+                    <div class="text-green-400 font-black">取 1-2</div>
+                </div>
+                <div class="bg-slate-800 px-2 py-1.5 rounded-lg border border-slate-700 text-[8px]">
+                    <div class="text-slate-500">12人+</div>
+                    <div class="text-purple-400 font-black">取 1-3</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 輸入區域 -->
+        <section class="p-4 mt-2 space-y-3">
+            <div class="flex flex-col gap-2">
+                <!-- 新增玩家區域 -->
+                <div class="flex gap-2 items-center">
+                    <div class="flex-1 bg-slate-800 p-1.5 rounded-xl border border-slate-700 shadow-inner">
+                        <input id="player-name" type="text" placeholder="輸入玩家姓名..." 
+                            onkeydown="if(event.key==='Enter') addPlayer()"
+                            class="bg-transparent w-full px-3 py-2 text-white outline-none font-bold text-sm">
+                    </div>
+                    <button onclick="addPlayer()" 
+                        class="bg-red-600 hover:bg-red-500 text-white px-5 h-12 rounded-xl font-black text-sm active:scale-95 transition shadow-lg shrink-0">
+                        新增玩家
+                    </button>
+                </div>
+
+                <div class="flex items-center gap-2 bg-slate-800/50 p-2 rounded-xl border border-slate-700/50">
+                    <label class="text-[10px] font-black text-slate-500 uppercase ml-2">每格費用 $</label>
+                    <input id="stake-amount" type="number" value="20" onchange="calculateAndRender()"
+                        class="bg-slate-900 w-20 px-3 py-1 rounded-lg text-red-400 font-sport text-center border border-slate-700 focus:border-red-500 outline-none">
+                </div>
+            </div>
+            
+            <!-- 玩家標籤 (點擊 X 可移除) -->
+            <div id="player-tags" class="flex flex-wrap gap-2 px-1"></div>
+        </section>
+
+        <!-- 紀錄表格 -->
+        <section class="mt-2">
+            <div class="table-container">
+                <!-- 左欄：姓名 -->
+                <div class="side-col side-col-left">
+                    <div class="header-h flex items-center justify-center border-b border-slate-800">姓名</div>
+                    <div id="name-col-body"></div>
+                </div>
+
+                <!-- 中欄：1-10格 -->
+                <div class="grid-area">
+                    <div id="frame-header" class="header-h flex w-full"></div>
+                    <div id="grid-col-body"></div>
+                </div>
+            </div>
+            <div class="p-2 text-center text-[9px] text-slate-600 font-bold bg-slate-950/30 italic">
+                TIPS: 點擊格子紀錄全倒 X · 每人每格 $ <span id="display-stake">20</span>
+            </div>
+        </section>
+
+        <!-- 結算彙整 -->
+        <section class="p-4 mt-1">
+            <div class="flex justify-between items-center mb-4 px-1">
+                <h2 class="text-xl font-black italic text-slate-200 tracking-tight underline decoration-red-500 decoration-2 underline-offset-4">輸贏總額</h2>
+                <div class="flex gap-2">
+                    <button onclick="resetScores()" class="px-3 py-1.5 bg-slate-800 text-red-500 text-[9px] font-black rounded-lg border border-red-900/30 active:bg-red-900/50 transition shadow-sm">
+                        清空 X
+                    </button>
+                    <button onclick="clearPlayers()" class="px-3 py-1.5 bg-slate-800 text-slate-400 text-[9px] font-black rounded-lg border border-slate-700 active:bg-slate-700 transition shadow-sm">
+                        重置名單
+                    </button>
+                </div>
+            </div>
+            <div id="summary-list" class="space-y-3"></div>
+        </section>
+
+    </div>
+
   </div>
 
+  <!-- Toast (共用通知元件) -->
+  <div id="toast" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white px-8 py-4 rounded-2xl opacity-0 pointer-events-none transition-all z-50 font-bold shadow-2xl"></div>
+
   <script>
-    // 取得畫面上的 HTML 元素
+    // ==================== 分頁切換邏輯 ====================
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.classList.remove('active');
+      });
+      document.getElementById(tabId).classList.add('active');
+      
+      const btnCalc = document.getElementById('btn-calculator');
+      const btnOther = document.getElementById('btn-strikecup');
+      
+      const inactiveClasses = ['text-blue-100', 'hover:text-white', 'dark:text-slate-300'];
+      const activeClasses = ['bg-white', 'text-blue-700', 'dark:bg-slate-800', 'dark:text-blue-300'];
+      
+      btnCalc.classList.remove(...activeClasses);
+      btnCalc.classList.add(...inactiveClasses);
+      btnOther.classList.remove(...activeClasses);
+      btnOther.classList.add(...inactiveClasses);
+
+      const activeBtn = tabId === 'tab-calculator' ? btnCalc : btnOther;
+      activeBtn.classList.remove(...inactiveClasses);
+      activeBtn.classList.add(...activeClasses);
+    }
+
+    // ==================== [分頁1] B標換算邏輯 ====================
     const baseScoreInput = document.getElementById('baseScore');
     const resultsGrid = document.getElementById('resultsGrid');
     const cupModeSelect = document.getElementById('cupMode');
     const tournamentHint = document.getElementById('tournamentHint');
 
-    // 1. 定義不同的倍率陣列模式
     const modes = {
       all: [],
       leisure: ["0.60", "0.64", "0.68", "0.72", "0.76", "0.80", "0.84", "0.88"],
@@ -97,21 +322,15 @@
       guanyuan_monthly: ["0.91", "0.88", "0.85", "0.82", "0.79", "0.76", "0.71", "0.68"]
     };
 
-    // 產生全部的倍率 (0.60 到 0.92)
     for (let i = 0; i <= 32; i++) {
       modes.all.push((0.60 + i * 0.01).toFixed(2));
     }
 
-    // 2. 計算並顯示所有B標結果的函數
     function calculate() {
-      // 取得輸入的值，如果為空則當作 0
       const baseScore = parseFloat(baseScoreInput.value) || 0;
-      
-      // 取得目前選取的模式陣列
       const activeMode = cupModeSelect.value;
       const activeMultipliers = modes[activeMode];
       
-      // 處理專屬提示顯示
       if (activeMode === 'guanyuan_monthly') {
         tournamentHint.innerHTML = '💡 <strong>特別提示：</strong> 冠源月賽計算後 <strong>B標需再扣 30 分</strong>';
         tournamentHint.classList.remove('hidden');
@@ -119,31 +338,182 @@
         tournamentHint.classList.add('hidden');
       }
       
-      // 清空現有的結果
       resultsGrid.innerHTML = '';
       
-      // 迴圈產生每個倍率的卡片
       activeMultipliers.forEach(multiplier => {
         const result = (baseScore * parseFloat(multiplier)).toFixed(1);
-        
-        // 建立卡片 HTML 結構
         const card = document.createElement('div');
         card.className = "bg-blue-50 dark:bg-blue-900/20 rounded-xl p-3 border border-blue-100 dark:border-blue-800/50 flex flex-col items-center shadow-sm";
         card.innerHTML = `
           <span class="text-xs text-slate-500 dark:text-slate-400 mb-1">倍率 ${multiplier}</span>
           <span class="text-xl font-bold text-blue-700 dark:text-blue-300">${result}</span>
         `;
-        
         resultsGrid.appendChild(card);
       });
     }
 
-    // 3. 監聽輸入框與下拉選單的變化，只要有改變就重新計算
     baseScoreInput.addEventListener('input', calculate);
     cupModeSelect.addEventListener('change', calculate);
+    calculate(); // 初始化 B標換算
 
-    // 4. 網頁剛載入時先執行一次計算
-    calculate();
+
+    // ==================== [分頁2] 全倒盃 STRIKE CUP 邏輯 ====================
+    let players = [];
+
+    function showToast(msg) {
+        const toast = document.getElementById('toast');
+        toast.innerText = msg;
+        toast.style.opacity = '1';
+        setTimeout(() => { toast.style.opacity = '0'; }, 1500);
+    }
+
+    function addPlayer() {
+        const input = document.getElementById('player-name');
+        const name = input.value.trim();
+        if (!name) return;
+        if (players.find(p => p.name === name)) {
+            showToast('❌ 姓名重複');
+            return;
+        }
+        players.push({
+            name: name,
+            strikes: Array(10).fill(false),
+            winLoss: 0
+        });
+        input.value = '';
+        calculateAndRender();
+    }
+
+    function removePlayer(index) {
+        if(confirm(`移除玩家「${players[index].name}」？`)) {
+            players.splice(index, 1);
+            calculateAndRender();
+        }
+    }
+
+    function clearPlayers() {
+        if(confirm(`確定要清空所有玩家名單嗎？`)) {
+            players = [];
+            calculateAndRender();
+        }
+    }
+
+    function toggleStrike(pIdx, fIdx) {
+        players[pIdx].strikes[fIdx] = !players[pIdx].strikes[fIdx];
+        calculateAndRender();
+    }
+
+    function resetScores() {
+        if(!confirm("確定要清空所有全倒紀錄嗎？")) return;
+        players.forEach(p => p.strikes = Array(10).fill(false));
+        calculateAndRender();
+    }
+
+    function calculateAndRender() {
+        const stakeInput = document.getElementById('stake-amount');
+        const currentStake = parseInt(stakeInput.value) || 0;
+        document.getElementById('display-stake').innerText = currentStake;
+
+        players.forEach(p => p.winLoss = 0);
+        const pCount = players.length;
+
+        if (pCount > 0) {
+            for (let f = 0; f < 10; f++) {
+                const strikers = [];
+                const losers = [];
+                players.forEach((p, idx) => {
+                    if (p.strikes[f]) strikers.push(idx);
+                    else losers.push(idx);
+                });
+
+                const sCount = strikers.length;
+                let isConditionMet = false;
+
+                if (pCount <= 6 && sCount === 1) {
+                    isConditionMet = true;
+                } else if (pCount >= 7 && pCount <= 11 && (sCount >= 1 && sCount <= 2)) {
+                    isConditionMet = true;
+                } else if (pCount >= 12 && (sCount >= 1 && sCount <= 3)) {
+                    isConditionMet = true;
+                }
+
+                if (isConditionMet) {
+                    const totalPool = losers.length * currentStake;
+                    const winPerPerson = totalPool / sCount;
+                    strikers.forEach(idx => players[idx].winLoss += winPerPerson);
+                    losers.forEach(idx => players[idx].winLoss -= currentStake);
+                }
+            }
+        }
+        renderStrikeCup();
+    }
+
+    function renderStrikeCup() {
+        // 1. 玩家標籤
+        document.getElementById('player-tags').innerHTML = players.map((p, i) => `
+            <div class="flex items-center bg-slate-800 border border-slate-700 px-2 py-1 rounded-lg text-[11px] font-bold shadow-sm">
+                <span class="text-slate-300">${p.name}</span>
+                <button onclick="removePlayer(${i})" class="ml-2 text-red-500 font-black w-5 h-5 flex items-center justify-center bg-slate-900 rounded-full hover:bg-red-900 transition">×</button>
+            </div>
+        `).join('');
+
+        // 2. 中欄標頭 (1-10 數字)
+        document.getElementById('frame-header').innerHTML = Array.from({length: 10}, (_, i) => {
+            const bg = i % 2 !== 0 ? 'bg-slate-800/50' : '';
+            return `<div class="flex-1 flex items-center justify-center border-r border-slate-800/30 font-black ${bg}">${i+1}</div>`;
+        }).join('');
+
+        // 3. 左欄：姓名
+        document.getElementById('name-col-body').innerHTML = players.map(p => `
+            <div class="row-h border-slate-800/50">
+                <span class="name-text truncate">${p.name}</span>
+            </div>
+        `).join('');
+
+        // 4. 中欄：1-10格
+        document.getElementById('grid-col-body').innerHTML = players.map((p, pIdx) => `
+            <div class="row-h flex border-slate-800/50">
+                ${p.strikes.map((s, fIdx) => {
+                    const bg = fIdx % 2 !== 0 ? 'bg-slate-800/50' : '';
+                    return `
+                    <div onclick="toggleStrike(${pIdx}, ${fIdx})" 
+                        class="strike-cell h-full ${bg} ${s ? 'active' : ''}">
+                        <span class="font-sport text-sm ${s ? 'text-white' : 'text-slate-800'}">${s ? 'X' : '·'}</span>
+                    </div>
+                    `;
+                }).join('')}
+            </div>
+        `).join('');
+
+        // 6. 結算卡片
+        const summaryContainer = document.getElementById('summary-list');
+        if (players.length === 0) {
+            summaryContainer.innerHTML = '<div class="text-center py-8 text-slate-700 font-bold text-[10px]">請先新增玩家名單</div>';
+            return;
+        }
+
+        summaryContainer.innerHTML = players.map(p => {
+            const isWinner = p.winLoss > 0;
+            const isLoser = p.winLoss < 0;
+            const amount = Math.round(p.winLoss);
+            return `
+                <div class="p-4 rounded-3xl flex justify-between items-center transition-all ${isWinner ? 'card-winner text-white scale-[1.02]' : 'bg-slate-800/50 border border-slate-700'}">
+                    <div>
+                        <div class="text-xl font-black italic tracking-tight">${p.name}</div>
+                        <div class="${isWinner ? 'text-red-200' : 'text-slate-500'} text-[9px] font-bold mt-1 uppercase">
+                            Strikes: ${p.strikes.filter(s => s).length} / 10
+                        </div>
+                    </div>
+                    <div class="text-2xl font-sport ${isWinner ? 'text-white' : isLoser ? 'text-red-500' : 'text-slate-600'}">
+                        ${amount > 0 ? '+' : ''}${amount}
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+    
+    calculateAndRender(); // 初始化全倒盃畫面
+
   </script>
 </body>
 </html>
