@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>打球要賺錢</title>
+  <title>保齡球多功能工具</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* 隱藏內容的輔助 class */
@@ -25,11 +25,12 @@
 
     :root {
         --name-w: 65px;   
+        --total-w: 50px;  
     }
 
     .table-container {
         display: grid;
-        grid-template-columns: var(--name-w) 1fr;
+        grid-template-columns: var(--name-w) 1fr; /* 移除全倒統計欄位 */
         overflow: hidden;
         width: 100%;
         border-top: 1px solid #1e293b;
@@ -44,11 +45,7 @@
     }
 
     .side-col-left { border-right: 1px solid #334155; }
-    .side-col-right {
-        border-left: 1px solid #334155;
-        background-color: rgba(30, 41, 59, 0.9);
-    }
-
+    
     .grid-area {
         display: flex;
         flex-direction: column;
@@ -121,7 +118,7 @@
           <circle cx="14" cy="9" r="1" fill="currentColor"></circle>
           <circle cx="12" cy="13" r="1" fill="currentColor"></circle>
         </svg>
-        打球要賺錢
+        保齡球多功能工具
       </h1>
       
       <!-- 頁籤按鈕 -->
@@ -178,7 +175,7 @@
       <!-- B標結果 -->
       <div class="pt-4 border-t border-slate-200 dark:border-slate-700">
         <h2 class="text-sm font-medium mb-3 text-slate-500 dark:text-slate-400 text-center">
-           各倍率計算結果
+           各倍率計算結果 (無條件捨去至小數第二位)
         </h2>
         <div id="resultsGrid" class="grid grid-cols-3 gap-3 max-h-[350px] overflow-y-auto p-1" style="scrollbar-width: thin;">
           <!-- 結果會顯示在這裡 -->
@@ -341,7 +338,11 @@
       resultsGrid.innerHTML = '';
       
       activeMultipliers.forEach(multiplier => {
-        const result = (baseScore * parseFloat(multiplier)).toFixed(1);
+        // 更新：計算結果精確至小數點第二位，且無條件捨去
+        const exactValue = baseScore * parseFloat(multiplier);
+        // 加上 Number.EPSILON 避免浮點數誤差，乘 100 取整數再除 100 來捨去第三位以後
+        const result = (Math.floor((exactValue + Number.EPSILON) * 100) / 100).toFixed(2);
+        
         const card = document.createElement('div');
         card.className = "bg-blue-50 dark:bg-blue-900/20 rounded-xl p-3 border border-blue-100 dark:border-blue-800/50 flex flex-col items-center shadow-sm";
         card.innerHTML = `
@@ -457,7 +458,7 @@
             </div>
         `).join('');
 
-        // 2. 中欄標頭 (1-10 數字)
+        // 2. 中欄標頭 (1-10 數字 - 雙數格深色背景)
         document.getElementById('frame-header').innerHTML = Array.from({length: 10}, (_, i) => {
             const bg = i % 2 !== 0 ? 'bg-slate-800/50' : '';
             return `<div class="flex-1 flex items-center justify-center border-r border-slate-800/30 font-black ${bg}">${i+1}</div>`;
@@ -470,7 +471,7 @@
             </div>
         `).join('');
 
-        // 4. 中欄：1-10格
+        // 4. 中欄：1-10格 (雙數格深色背景)
         document.getElementById('grid-col-body').innerHTML = players.map((p, pIdx) => `
             <div class="row-h flex border-slate-800/50">
                 ${p.strikes.map((s, fIdx) => {
@@ -485,7 +486,7 @@
             </div>
         `).join('');
 
-        // 6. 結算卡片
+        // 5. 結算卡片
         const summaryContainer = document.getElementById('summary-list');
         if (players.length === 0) {
             summaryContainer.innerHTML = '<div class="text-center py-8 text-slate-700 font-bold text-[10px]">請先新增玩家名單</div>';
@@ -517,3 +518,5 @@
   </script>
 </body>
 </html>
+
+
