@@ -107,6 +107,30 @@
 </head>
 <body class="min-h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 p-4 font-sans flex justify-center items-start">
   
+  <!-- ==================== 彈出式廣告 ==================== -->
+  <div id="popup-ad" class="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-300">
+    <div class="relative bg-white dark:bg-slate-800 rounded-2xl shadow-2xl overflow-hidden max-w-md w-full animate-[bounce_0.5s_ease-out]">
+      <!-- 關閉按鈕 -->
+      <button onclick="closeAd()" class="absolute top-2 right-2 z-10 bg-black/50 text-white hover:bg-red-600 rounded-full w-8 h-8 flex items-center justify-center transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      
+      <!-- 廣告圖片 -->
+      <div class="w-full h-auto flex flex-col items-center">
+        <!-- 💡 只需要修改下一行的 src="..." 裡面的網址 💡 -->
+        <img src="260570.jpg" alt="活動廣告" class="w-full h-auto object-contain max-h-[70vh]">
+        <div class="p-4 bg-slate-900 w-full text-center">
+          <button onclick="closeAd()" class="bg-red-600 hover:bg-red-500 text-white font-bold py-2 px-8 rounded-full shadow-lg transition-transform active:scale-95">
+            進入工具
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden mt-6">
     
     <!-- 頂部導覽列 (Tabs) -->
@@ -279,6 +303,22 @@
   <div id="toast" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-600 text-white px-8 py-4 rounded-2xl opacity-0 pointer-events-none transition-all z-50 font-bold shadow-2xl"></div>
 
   <script>
+    // ==================== 廣告控制邏輯 ====================
+    function closeAd() {
+      const ad = document.getElementById('popup-ad');
+      ad.style.opacity = '0';
+      setTimeout(() => {
+        ad.style.display = 'none';
+      }, 300); // 等待淡出動畫結束
+    }
+
+    // 點擊背景也可以關閉廣告
+    document.getElementById('popup-ad').addEventListener('click', function(e) {
+      if (e.target === this) {
+        closeAd();
+      }
+    });
+
     // ==================== 分頁切換邏輯 ====================
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => {
@@ -518,5 +558,3 @@
   </script>
 </body>
 </html>
-
-
