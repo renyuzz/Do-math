@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>保齡球多功能工具</title>
+  <title>打球要賺錢</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     /* 隱藏內容的輔助 class */
@@ -181,11 +181,9 @@
             class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition-all dark:text-white"
           >
             <option value="all">全部倍率</option>
-            <option value="leisure">超越休閒盃</option>
-            <option value="dajiale">超越大家樂</option>
+            <option value="leisure_dajiale">超越休閒 / 大家樂</option>
             <option value="golden_feedback">黃金回饋</option>
-            <option value="golden_fuying">黃金府瀛</option>
-            <option value="golden_xiongfeng">黃金雄風</option>
+            <option value="golden_fuying_xiongfeng">黃金府瀛 / 雄風</option>
             <option value="neipu_qulian">內埔曲聯</option>
             <option value="guanyuan_monthly">冠源月賽</option>
           </select>
@@ -350,11 +348,9 @@
 
     const modes = {
       all: [],
-      leisure: ["0.60", "0.64", "0.68", "0.72", "0.76", "0.80", "0.84", "0.88"],
-      dajiale: ["0.60", "0.64", "0.68", "0.72", "0.76", "0.80", "0.84", "0.88"],
+      leisure_dajiale: ["0.60", "0.64", "0.68", "0.72", "0.76", "0.80", "0.84", "0.88"],
       golden_feedback: ["0.70", "0.72", "0.74", "0.76", "0.78", "0.80", "0.82", "0.84", "0.86", "0.88", "0.90"],
-      golden_fuying: ["0.72", "0.73", "0.74", "0.75", "0.76", "0.77", "0.78", "0.79", "0.80", "0.81", "0.82"],
-      golden_xiongfeng: ["0.72", "0.73", "0.74", "0.75", "0.76", "0.77", "0.78", "0.79", "0.80", "0.81", "0.82"],
+      golden_fuying_xiongfeng: ["0.72", "0.73", "0.74", "0.75", "0.76", "0.77", "0.78", "0.79", "0.80", "0.81", "0.82"],
       neipu_qulian: ["0.55", "0.60", "0.65", "0.70", "0.75", "0.80", "0.85", "0.90", "0.95"],
       guanyuan_monthly: ["0.91", "0.88", "0.85", "0.82", "0.79", "0.76", "0.71", "0.68"]
     };
